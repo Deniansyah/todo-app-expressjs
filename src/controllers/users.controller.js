@@ -1,17 +1,16 @@
-const { selectAllUsers } = require("../models/users.model");
+const { selectAllUsers, insertUser, changeUser, dropUser, selectUser } = require("../models/users.model");
 
 exports.readAllUsers = (req, res) => {
   selectAllUsers((err, data) => {
-    console.log(err)
     if (err) {
       return res.status(400).json({
         success: false,
-        message: "Errror"
+        message: "Something wrong in controller database",
       });
     } else {
       return res.status(200).json({
         success: true,
-        message: "List data of users mana?",
+        message: "List data of users",
         results: data.rows,
       });
     }
@@ -19,29 +18,68 @@ exports.readAllUsers = (req, res) => {
 }
 
 exports.createUser = (req, res) => {
-  return res.status(200).json({
-    success: true,
-    message: "User created successfully",
-  });
+  insertUser(req.body, (err, data) => {
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        message: "Something wrong in controller database",
+      });
+    } else {
+      return res.status(200).json({
+        status: true,
+        message: "User created success",
+        results: data.rows[0],
+      });
+    }
+  })
 };
 
 exports.updateUser = (req, res) => {
-  return res.status(200).json({
-    success: true,
-    message: "User updated successfully",
+  changeUser(req.params.id, req.body, (err, data) => {
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        message: "Something wrong in controller database",
+      });
+    } else {
+      return res.status(200).json({
+        status: true,
+        message: "Updated detail user",
+        results: data.rows[0],
+      });
+    }
   });
 };
 
 exports.deleteUser = (req, res) => {
-  return res.status(200).json({
-    success: true,
-    message: "Delete user is successfully",
+  dropUser(req.params.id, (err, data) => {
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        message: "Something wrong in controller database",
+      });
+    } else {
+      res.status(200).json({
+        status: true,
+        message: "Delete data user id = " + req.params.id + " success",
+      });
+    }
   });
 };
 
 exports.readUser = (req, res) => {
-  return res.status(200).json({
-    success: true,
-    message: "Detail User",
+  selectUser(req.params.id, (err, data) => {
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        message: "Something wrong in controller database",
+      });
+    } else {
+      res.status(200).json({
+        status: true,
+        message: "Detail User",
+        results: data.rows[0],
+      });
+    }
   });
 };
